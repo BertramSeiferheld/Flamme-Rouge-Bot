@@ -1,0 +1,267 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jun 18 13:03:53 2024
+
+@author: 1000b
+"""
+
+import random
+
+
+
+def main():
+    
+    amountOfBots =  numberOfBots()
+    
+    botTypes = typeOfBots(amountOfBots)
+    
+    print('The game developers recommend distributing three exhaustion cards amongst your Sprinteur and Rouleur.\n\nYou can increase or decrease the number for a harder or easier game.')
+    
+    
+    playerRouleurDeck, playerSprintDeck = playerDeck()
+    print("Your Rouleur deck is now: {}".format(playerRouleurDeck))
+    print("Your Sprinteur deck is now: {}".format(playerSprintDeck))
+    
+    botDecks = botDeck(botTypes)
+    
+    print("This program assumes (for now at least), that you are drawing your own cards")
+    playLoop(botDecks, playerRouleurDeck, playerSprintDeck)
+    
+    
+# =============================================================================
+#     player = withOrWithoutPlayer()
+#     if player == "y":
+#        playLoop(player, botDecks, playerRouleurDeck, playerSprintDeck)
+#        
+#     if player == "n":
+#         playLoop(player, botDecks, playerRouleurDeck, playerSprintDeck)
+#         
+# =============================================================================
+    
+    
+  #  kør bot turene
+   # og bliv ved med det indtil spilleren sig spillet er slut
+    
+def numberOfBots():
+    while True:
+        numOfBots = input('How many bots are playing? (max of 5): ')
+        try:
+            val = int(numOfBots)
+        except ValueError:
+            print("Please input a whole number.")
+            continue
+        if val < 0:
+            print("Please input a whole number greater than 0.")
+            continue
+        if val > 5:
+            print("Please input a whole number less than or equal to 5")
+            continue
+        return numOfBots
+    
+        
+def typeOfBots(number):
+    print('\nYou can have at most 1 "Peloton"-bot, but any amount of "Muscle"-bots (up to the limit of bots (5)).\n')
+    botTypes = []
+    while True:
+        pelotonBot = input('Will you have a "Peloton"-bot? (y or n): ')
+        if pelotonBot == "y":
+            botTypes.append("Peloton")
+            for i in range(int(number)-1):
+                botTypes.append("Muscle")
+            break
+        elif pelotonBot != "y" and pelotonBot != "n":
+            print("Please input 'y' for yes or 'n' for no")
+            continue
+        else:
+            for i in range(int(number)):
+                botTypes.append("Muscle")
+            break
+    print("You now have the following bots in play: {}\n".format(botTypes))
+    return botTypes
+    
+    
+def playerDeck():
+    playerSprintDeck = [2,2,2,3,3,3,4,4,4,5,5,5,9,9,9]
+    playerRouleurDeck = [3,3,3,4,4,4,5,5,5,6,6,6,7,7,7]
+    
+    
+    while True:
+        exhCards = input('How many exhaustion cards will you put in your deck?: ')
+        try:
+            val = int(exhCards)
+        except ValueError:
+            print("Please input a whole number.")
+            continue
+        if val < 0:
+            print("Please input a whole number greater than or equal to 0.")
+            continue
+        if val == 0:
+            break
+        break
+      
+    if int(exhCards) == 0:
+        return playerRouleurDeck, playerSprintDeck
+    
+    while True:
+        rouleurExh = input('How many of your ' + str(exhCards) + ' exhaustion cards do you want to put in your Rouleur deck?: ')
+        try:
+            val = int(rouleurExh)
+        except ValueError:
+            print("Please input a whole number.")
+            continue
+        if val < 0:
+            print("Please input a whole number greater than or equal to 0.")
+            continue
+        if val > int(exhCards):
+            print("You can't put more exhaustion cards in the deck than the total amount you chose.")
+            continue
+        break
+    
+    
+    if int(rouleurExh) == int(exhCards):
+        for i in range(int(exhCards)):
+            playerRouleurDeck.append(2)
+    else:
+        for j in range(int(rouleurExh)):
+            playerRouleurDeck.append(2)
+        for k in range((int(exhCards)-int(rouleurExh))):
+            playerSprintDeck.append(2)
+    return playerRouleurDeck, playerSprintDeck
+                
+        
+    
+def botDeck(listOfBotTypes): 
+    bots = []
+    for i in range(0,len(listOfBotTypes)):
+        if listOfBotTypes[i] == "Peloton":
+            bots.append([3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,"2/9","2/9"])
+        elif listOfBotTypes[i] == "Muscle":
+            bots.append([3,3,3,4,4,4,5,5,5,6,6,6,7,7,7])
+            bots.append([2,2,2,3,3,3,4,4,4,5,5,5,9,9,9,5])
+        
+    return bots
+
+# =============================================================================
+# def withOrWithoutPlayer():
+#     while True:
+#         player = input("\n\nDo you want to play your own hand with your own physical cards? (y or n):")
+#    
+#         if player == "y" or player == "n":
+#             return player
+#         else:
+#             print("\nPlease input either 'y' or 'n'.")
+#             continue
+#     
+# =============================================================================
+    
+def playLoop(bots, playerDeckRouleur, playerDeckSprinteur):
+    #if player == "y":
+        print("This program will draw for each bot.")
+        
+        while True:
+            input("\n\nPress Enter to continue...")
+            if len(bots)%2 != 0:
+                print("The 'Peloton'-bot moves: ")
+                random.shuffle(bots[0])
+                print(bots[0][0])
+                del bots[0][0]
+              
+                i = 0
+                while i < len(bots)-1:
+                    i +=1
+                    print("'Muscle Rouleur'-bot no. " +  str(i) + " moves: ")
+                    random.shuffle(bots[i])
+                    if len(bots[i]) == 0:
+                        print(2)
+                    else:
+                        print(bots[i][0])
+                        del bots[i][0]
+                    i += 1
+                    print("'Muscle Sprinteur'-bot no. " +  str(i-1) + " moves: ")
+                    if len(bots[i]) == 0:
+                        print(2)
+                    else:
+                        print(bots[i][0])
+                        del bots[i][0]           
+            
+            else:
+                i = 0
+                j = 1
+                k = 1
+                while i < len(bots):
+                    print("'Muscle Rouleur'-bot no. " +  str(k) + " moves: ")
+                    random.shuffle(bots[i])
+                    if len(bots[i]) == 0:
+                        print(2)
+                    else:
+                        print(bots[i][0])
+                        del bots[i][0]
+                    i += 2
+                    
+                    print("'Muscle Sprinteur'-bot no. " +  str(k) + " moves: ")
+                    random.shuffle(bots[j])
+                    if len(bots[j]) == 0:
+                        print(2)
+                    else:
+                        print(bots[j][0])
+                        del bots[j][0]
+                    j += 2
+                    k += 1
+            
+
+# =============================================================================
+#                     
+#     if player == "n":
+#         print("This program will draw your hand and let you choose a card to play, and then draw for each bot.")
+#         
+#         random.shuffle(playerDeckRouleur)
+#         random.shuffle(playerDeckSprinteur)
+#         
+#         while True:
+#             input("\n\nPress Enter to continue...")
+#             
+#             print('From your Rouleur-deck, the following numbers have been drawn: ')
+#             card1 = print(playerDeckRouleur[0])
+#             card2 = print(playerDeckRouleur[1])
+#             card3 = print(playerDeckRouleur[2])
+#             card4 = print(playerDeckRouleur[3])
+#             choice = input("Please write the number you choose to move: ")
+#             if choice == card1:
+#                 del playerDeckRouleur[0]
+#             elif choice == card2:
+#                 del playerDeckRouleur[1]
+#             elif choice == card3:
+#                 del playerDeckRouleur[2]
+#             elif choice == card4:
+#                 del playerDeckRouleur[3]
+#                 
+#                 
+#                 
+#             if len(bots)%2 != 0:
+#                 print("The 'Peloton'-bot moves: ")
+#                 random.shuffle(bots[0])
+#                 print(bots[0][0])
+#                 del bots[0][0]
+#               
+#             i = 0
+#             while i < len(bots)-1:
+#                 i +=1
+#                 print("'Muscle Rouleur'-bot no. " +  str(i) + " moves: ")
+#                 random.shuffle(bots[i])
+#                 print(bots[i][0])
+#                 del bots[i][0]
+#                 i += 1
+#                 print("'Muscle Sprinteur'-bot no. " +  str(i-1) + " moves: ")
+#                 random.shuffle(bots[i])
+#                 print(bots[i][0])
+#                 del bots[i][0]                    
+#             
+# 
+#     
+#     
+# =============================================================================
+    
+  
+   
+
+main()
